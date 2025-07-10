@@ -114,107 +114,74 @@ io.on('connection', (socket) => {
     });
 });
 
-const express = require('express');
-const { Server } = require('socket.io');
+const socket = io('https://tic-tac-toe-multiplayer-abc123.vercel.app', {
+    transports: ['websocket', 'polling']
+});
 
-const app = express();
+const cells = document.querySelectorAll('.cell');
+const status = document.getElementById('status');
+const resetButton = document.getElementById('reset');
+const createRoomButton = document.getElementById('create-room');
+let currentPlayer = null;
+let roomId = null;
 
-module.exports = (req, res) => {
-    if (!res.socket.server.io) {
-        const io = new Server(res.socket.server, {
-            cors: {
-                origin: '*',
-                methods: ['GET', 'POST'],
-                credentials: true
-            }
-        });
+socket.on('connect', () => {
+    console.log('Successfully connected to Socket.IO server');
+});
 
-        const rooms = new Map(); // Store room data: { roomId: { board, players, currentPlayer } }
+socket.on('connect_error', (error) => {
+    console.error('Socket.IO connection error:', error);
+});
 
-        io.on('connection', (socket) => {
-            console.log('New client connected:', socket.id);
+function createRoom() {
+    socket.emit('createRoom');
+}
 
-            socket.on('createRoom', () => {
-                const roomId = `room-${Math.random().toString(36).slice(2, 9)}`;
-                rooms.set(roomId, {
-                    board: Array(9).fill(''),
-                    players: [socket.id],
-                    currentPlayer: 'X'
-                });
-                socket.join(roomId);
-                socket.emit('roomCreated', roomId);
-                console.log(`Room created: ${roomId}`);
-            });
+createRoomButton.addEventListener('click', createRoom);
 
-            socket.on('move', ({ roomId, index }) => {
-                const room = rooms.get(roomId);
-                if (!room || !room.players.includes(socket.id)) return;
-                if (room.board[index] === '' && room.players.length === 2) {
-                    room.board[index] = room.currentPlayer;
-                    io.to(roomId).emit('move', { index, player: room.currentPlayer });
-                    if (checkWin(room.board)) {
-                        io.to(roomId).emit('win', room.currentPlayer);
-                        room.board = Array(9).fill('');
-                    } else if (room.board.every(cell => cell !== '')) {
-                        io.to(roomId).emit('draw');
-                        room.board = Array(9).fill('');
-                    } else {
-                        room.currentPlayer = room.currentPlayer === 'X' ? 'O' : 'X';
-                    }
-                }
-            });
+socket.on('roomCreated', (id) => {
+    roomId = id;
+    status.textContent = `Room ${roomId} created. Waiting for opponent...`;
+});
 
-            socket.on('reset', (roomId) => {
-                const room = rooms.get(roomId);
-                if (room) {
-                    room.board = Array(9).fill('');
-                    room.currentPlayer = 'X';
-                    io.to(roomId).emit('reset');
-                }
-            });
+socket.on('player', (player) => {
+    currentPlayer = player;
+    status.textContent = `You are ${player} in room ${roomId}. Waiting for opponent...`;
+});
 
-            socket.on('disconnect', () => {
-                console.log('Client disconnected:', socket.id);
-                rooms.forEach((room, roomId) => {
-                    room.players = room.players.filter(id => id !== socket.id);
-                    if (room.players.length === 0) {
-                        rooms.delete(roomId);
-                    }
-                });
-            });
+socket.on('start', () => {
+    status.textContent = `Your turn (${currentPlayer})`;
+});
 
-            // Auto-join an available room
-            let joined = false;
-            for (const [roomId, room] of rooms) {
-                if (room.players.length === 1) {
-                    room.players.push(socket.id);
-                    socket.join(roomId);
-                    socket.emit('player', room.players.length === 1 ? 'X' : 'O');
-                    io.to(roomId).emit('start');
-                    joined = true;
-                    break;
-                }
-            }
-            if (!joined && rooms.size > 0) {
-                socket.emit('status', 'All rooms are full');
-                socket.disconnect();
-            }
-        });
+socket.on('move', ({ index, player }) => {
+    cells[index].textContent = player;
+    status.textContent = `${player === currentPlayer ? 'Your turn' : "Opponent's turn"}`;
+});
 
-        function checkWin(board) {
-            const wins = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8],
-                [0, 3, 6], [1, 4, 7], [2, 5, 8],
-                [0, 4, 8], [2, 4, 6]
-            ];
-            return wins.some(combo => combo.every(i => board[i] === board[combo[0]] && board[i] !== ''));
-        }
+socket.on('win', (player) => {
+    status.textContent = `${player} wins!`;
+    cells.forEach(cell => cell.style.pointerEvents = 'none');
+});
 
-        res.socket.server.io = io;
-    }
-    res.status(200).end();
-};
+socket.on('draw', () => {
+    status.textContent = "It's a draw!";
+});
 
-server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+cells.forEach(cell => {
+    cell.addEventListener('click', () => {
+        const index = cell.getAttribute('data-index');
+        socket.emit('move', { roomId, index });
+    });
+});
+
+resetButton.addEventListener('click', () => {
+    socket.emit('reset', roomId);
+});
+
+socket.on('reset', () => {
+    cells.forEach(cell => {
+        cell.textContent = '';
+        cell.style.pointerEvents = 'auto';
+    });
+    status.textContent = `Your turn (${currentPlayer})`;
 });
