@@ -15,7 +15,7 @@ const winningCombinations = [
     [0, 4, 8], [2, 4, 6]
 ];
 
-const socket = io('https://your-vercel-url.vercel.app', {
+const socket = io('https://github.com/TosifShaikh03/tic-tac-toe-multiplayer/tree/main', {
     transports: ['websocket', 'polling'] // Ensure WebSocket is preferred
 });
 socket.on('connect', () => {
