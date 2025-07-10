@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000');
+const socket = io('tic-tac-toe-multiplayer-9d7i-2idfpqr71-tosif-shaikhs-projects.vercel.app');
 socket.on('connect', () => console.log('Connected to server!'));
 socket.on('connect_error', (error) => console.error('Connection error:', error));
 let currentPlayer = 'x';
