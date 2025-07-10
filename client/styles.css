@@ -1,134 +1,112 @@
+/* Reset default styles for consistency */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Orbitron', sans-serif;
 }
+
+/* Body styling */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-}
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(45deg, #0a0a0a, #1a1a2e);
-    overflow: hidden;
-}
-
-.container {
-    text-align: center;
+    background-color: #f0f8ff; /* Light blue background */
     padding: 20px;
-    max-width: 600px;
-    width: 90%;
+    color: #333;
 }
 
+/* Heading */
 h1 {
-    color: #00ffcc;
-    text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+    font-size: 2.5em;
     margin-bottom: 20px;
-    font-size: 2.5rem;
+    color: #2c3e50;
 }
 
-.start-screen, .game-screen {
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid #00ffcc;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
-    backdrop-filter: blur(10px);
+/* Status message */
+#status {
+    font-size: 1.5em;
+    margin: 20px 0;
+    color: #e74c3c; /* Red for emphasis */
 }
 
-.start-screen {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-input, button {
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #00ffcc;
-    border-radius: 5px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-input:focus, button:hover {
-    box-shadow: 0 0 10px #00ffcc;
-}
-
-button {
-    cursor: pointer;
-    background: #00ffcc;
-    color: #0a0a0a;
-    font-weight: bold;
-}
-
-.game-screen {
-    display: none;
-}
-
-.board {
+/* Game board */
+#game-board {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    width: 100%;
-    max-width: 400px;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 5px;
     margin: 20px auto;
+    width: 315px; /* 3 cells * 100px + 2 gaps * 7.5px */
 }
 
+/* Individual cells */
 .cell {
-    aspect-ratio: 1;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid #00ffcc;
-    border-radius: 10px;
+    width: 100px;
+    height: 100px;
+    border: 2px solid #2c3e50;
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 2.5rem;
-    color: #fff;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: #34495e;
+    background-color: #fff;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s;
 }
 
 .cell:hover {
-    background: rgba(0, 255, 204, 0.2);
+    background-color: #ecf0f1; /* Light gray on hover */
 }
 
-.cell.x::before {
-    content: 'X';
-    color: #ff007a;
-    text-shadow: 0 0 10px #ff007a;
-}
-
-.cell.o::before {
-    content: 'O';
-    color: #00ffcc;
-    text-shadow: 0 0 10px #00ffcc;
-}
-
-.status {
+/* Buttons (Create Room and Reset) */
+#create-room,
+#reset {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3498db; /* Blue */
     color: #fff;
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    text-shadow: 0 0 5px #00ffcc;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.win-animation {
-    animation: winPulse 1s infinite alternate;
+#create-room:hover,
+#reset:hover {
+    background-color: #2980b9; /* Darker blue on hover */
 }
 
-@keyframes winPulse {
-    0% { transform: scale(1); box-shadow: 0 0 10px #00ffcc; }
-    100% { transform: scale(1.1); box-shadow: 0 0 20px #ff007a; }
+/* Disabled button state */
+#create-room:disabled,
+#reset:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
 }
 
-@media (max-width: 600px) {
-    h1 { font-size: 1.8rem; }
-    .cell { font-size: 2rem; }
-    .board { max-width: 300px; }
+/* Responsive design for smaller screens */
+@media (max-width: 400px) {
+    #game-board {
+        grid-template-columns: repeat(3, 80px);
+        width: 252px; /* 3 cells * 80px + 2 gaps * 6px */
+    }
+
+    .cell {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    #status {
+        font-size: 1.2em;
+    }
+
+    #create-room,
+    #reset {
+        font-size: 1em;
+        padding: 8px 16px;
+    }
 }
