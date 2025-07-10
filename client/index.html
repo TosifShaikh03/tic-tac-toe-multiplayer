@@ -3,27 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multiplayer Tic-Tac-Toe</title>
+    <title>Futuristic Tic-Tac-Toe</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
 </head>
 <body>
-    <h1>Multiplayer Tic-Tac-Toe</h1>
-    <div id="status">Waiting for opponent...</div>
-    <div id="game-board">
-        <div class="cell" data-index="0"></div>
-        <div class="cell" data-index="1"></div>
-        <div class="cell" data-index="2"></div>
-        <div class="cell" data-index="3"></div>
-        <div class="cell" data-index="4"></div>
-        <div class="cell" data-index="5"></div>
-        <div class="cell" data-index="6"></div>
-        <div class="cell" data-index="7"></div>
-        <div class="cell" data-index="8"></div>
+    <div class="container">
+        <h1>Futuristic Tic-Tac-Toe</h1>
+        <div class="start-screen" id="startScreen">
+            <input type="text" id="playerName" placeholder="Your Name">
+            <button onclick="createRoom()">Create Game Room</button>
+            <input type="text" id="roomCode" placeholder="Enter 4-Digit Room Code">
+            <button onclick="joinRoom()">Join Game Room</button>
+            <button onclick="startGame('computer')">Play with Computer</button>
+        </div>
+        <div class="game-screen" id="gameScreen">
+            <div class="status" id="status"></div>
+            <div class="board" id="board">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+            <button onclick="resetGame()">Restart Game</button>
+        </div>
     </div>
-    <button id="reset">Reset Game</button>
-    <!-- Add room creation UI if needed -->
-    <button id="create-room">Create Room</button>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
