@@ -114,6 +114,107 @@ io.on('connection', (socket) => {
     });
 });
 
+const express = require('express');
+const { Server } = require('socket.io');
+
+const app = express();
+
+module.exports = (req, res) => {
+    if (!res.socket.server.io) {
+        const io = new Server(res.socket.server, {
+            cors: {
+                origin: '*',
+                methods: ['GET', 'POST'],
+                credentials: true
+            }
+        });
+
+        const rooms = new Map(); // Store room data: { roomId: { board, players, currentPlayer } }
+
+        io.on('connection', (socket) => {
+            console.log('New client connected:', socket.id);
+
+            socket.on('createRoom', () => {
+                const roomId = `room-${Math.random().toString(36).slice(2, 9)}`;
+                rooms.set(roomId, {
+                    board: Array(9).fill(''),
+                    players: [socket.id],
+                    currentPlayer: 'X'
+                });
+                socket.join(roomId);
+                socket.emit('roomCreated', roomId);
+                console.log(`Room created: ${roomId}`);
+            });
+
+            socket.on('move', ({ roomId, index }) => {
+                const room = rooms.get(roomId);
+                if (!room || !room.players.includes(socket.id)) return;
+                if (room.board[index] === '' && room.players.length === 2) {
+                    room.board[index] = room.currentPlayer;
+                    io.to(roomId).emit('move', { index, player: room.currentPlayer });
+                    if (checkWin(room.board)) {
+                        io.to(roomId).emit('win', room.currentPlayer);
+                        room.board = Array(9).fill('');
+                    } else if (room.board.every(cell => cell !== '')) {
+                        io.to(roomId).emit('draw');
+                        room.board = Array(9).fill('');
+                    } else {
+                        room.currentPlayer = room.currentPlayer === 'X' ? 'O' : 'X';
+                    }
+                }
+            });
+
+            socket.on('reset', (roomId) => {
+                const room = rooms.get(roomId);
+                if (room) {
+                    room.board = Array(9).fill('');
+                    room.currentPlayer = 'X';
+                    io.to(roomId).emit('reset');
+                }
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Client disconnected:', socket.id);
+                rooms.forEach((room, roomId) => {
+                    room.players = room.players.filter(id => id !== socket.id);
+                    if (room.players.length === 0) {
+                        rooms.delete(roomId);
+                    }
+                });
+            });
+
+            // Auto-join an available room
+            let joined = false;
+            for (const [roomId, room] of rooms) {
+                if (room.players.length === 1) {
+                    room.players.push(socket.id);
+                    socket.join(roomId);
+                    socket.emit('player', room.players.length === 1 ? 'X' : 'O');
+                    io.to(roomId).emit('start');
+                    joined = true;
+                    break;
+                }
+            }
+            if (!joined && rooms.size > 0) {
+                socket.emit('status', 'All rooms are full');
+                socket.disconnect();
+            }
+        });
+
+        function checkWin(board) {
+            const wins = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            return wins.some(combo => combo.every(i => board[i] === board[combo[0]] && board[i] !== ''));
+        }
+
+        res.socket.server.io = io;
+    }
+    res.status(200).end();
+};
+
 server.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
