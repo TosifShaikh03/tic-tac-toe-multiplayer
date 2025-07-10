@@ -1,4 +1,4 @@
-const socket = io('https://github.com/TosifShaikh03/tic-tac-toe-multiplayer/tree/main', {
+const socket = io('https://tic-tac-toe-multiplayer-9d7i-tosif-shaikhs-projects.vercel.app/', {
     transports: ['websocket', 'polling'] // Prefer WebSocket, fallback to polling
 });
 
