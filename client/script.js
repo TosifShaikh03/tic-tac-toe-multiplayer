@@ -15,6 +15,16 @@ const winningCombinations = [
     [0, 4, 8], [2, 4, 6]
 ];
 
+const socket = io('https://your-vercel-url.vercel.app', {
+    transports: ['websocket', 'polling'] // Ensure WebSocket is preferred
+});
+socket.on('connect', () => {
+    console.log('Successfully connected to Socket.IO server');
+});
+socket.on('connect_error', (error) => {
+    console.error('Socket.IO connection error:', error);
+});
+
 function createRoom() {
     playerName = document.getElementById('playerName').value || 'Player 1';
     socket.emit('createRoom', playerName, (code) => {
