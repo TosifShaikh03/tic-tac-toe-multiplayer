@@ -1,0 +1,131 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Orbitron', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(45deg, #0a0a0a, #1a1a2e);
+    overflow: hidden;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+    max-width: 600px;
+    width: 90%;
+}
+
+h1 {
+    color: #00ffcc;
+    text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+}
+
+.start-screen, .game-screen {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid #00ffcc;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+.start-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input, button {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #00ffcc;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input:focus, button:hover {
+    box-shadow: 0 0 10px #00ffcc;
+}
+
+button {
+    cursor: pointer;
+    background: #00ffcc;
+    color: #0a0a0a;
+    font-weight: bold;
+}
+
+.game-screen {
+    display: none;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.cell {
+    aspect-ratio: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #00ffcc;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cell:hover {
+    background: rgba(0, 255, 204, 0.2);
+}
+
+.cell.x::before {
+    content: 'X';
+    color: #ff007a;
+    text-shadow: 0 0 10px #ff007a;
+}
+
+.cell.o::before {
+    content: 'O';
+    color: #00ffcc;
+    text-shadow: 0 0 10px #00ffcc;
+}
+
+.status {
+    color: #fff;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 5px #00ffcc;
+}
+
+.win-animation {
+    animation: winPulse 1s infinite alternate;
+}
+
+@keyframes winPulse {
+    0% { transform: scale(1); box-shadow: 0 0 10px #00ffcc; }
+    100% { transform: scale(1.1); box-shadow: 0 0 20px #ff007a; }
+}
+
+@media (max-width: 600px) {
+    h1 { font-size: 1.8rem; }
+    .cell { font-size: 2rem; }
+    .board { max-width: 300px; }
+}
