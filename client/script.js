@@ -1,4 +1,4 @@
-const socket = io('https://tic-tac-toe-multiplayer-seven.vercel.app/'); // Update to Render URL after backend deployment
+const socket = io('https://tic-tac-toe-multiplayer-git-main-tosif-shaikhs-projects.vercel.app/'); // Update to Render URL after backend deployment
 socket.on('connect', () => console.log('Connected to server!'));
 socket.on('connect_error', (error) => console.error('Connection error:', error));
 let currentPlayer = 'x';
