@@ -10,7 +10,7 @@ const io = socketIO(server, {
         // origin: 'http://localhost:5500',
           origin: [
                     'https://tic-tac-toe-multiplayer-lhdhg5yj1-tosif-shaikhs-projects.vercel.app',
-                    // 'https://tic-tac-toe-multiplayer-git-main-tosif-shaikhs-projects.vercel.app',
+                    'https://tic-tac-toe-multiplayer-git-main-tosif-shaikhs-projects.vercel.app',
                     'http://localhost:8000',
                     'http://localhost:5500'
                 ],
