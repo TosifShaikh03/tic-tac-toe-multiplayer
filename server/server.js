@@ -7,8 +7,16 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
     cors: {
-        origin: 'http://localhost:5500',
-        methods: ['GET', 'POST'],
+        // origin: 'http://localhost:5500',
+          origin: [
+                    'https://tic-tac-toe-multiplayer-lhdhg5yj1-tosif-shaikhs-projects.vercel.app',
+                    'https://tic-tac-toe-multiplayer-git-main-tosif-shaikhs-projects.vercel.app',
+                    'http://localhost:8000',
+                    'http://localhost:5500'
+                ],
+                methods: ['GET', 'POST'],
+                credentials: true
+        // methods: ['GET', 'POST'],
     },
 });
 
